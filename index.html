@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Slasher | News & Cards</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS STYLES */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f4f4f9; color: #333; }
+
+        header {
+            background: #fff;
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .nav-container {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; margin: 0 auto;
+        }
+
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: bold; color: #e3350d; }
+        .logo img { width: 50px; height: 50px; }
+
+        /* Search Bubble */
+        .search-bubble {
+            background: #fff; border: 2px solid #eee; padding: 5px 15px;
+            border-radius: 50px; display: flex; align-items: center; width: 350px;
+            transition: 0.3s;
+        }
+        .search-bubble:focus-within { border-color: #e3350d; box-shadow: 0 0 8px rgba(227, 53, 13, 0.2); }
+        .search-bubble input { border: none; background: transparent; padding: 10px; width: 100%; outline: none; }
+        .search-bubble button { border: none; background: transparent; cursor: pointer; color: #e3350d; font-size: 1.2rem; }
+
+        main { max-width: 1200px; margin: 2rem auto; padding: 0 5%; min-height: 80vh; }
+        .section-title { margin-bottom: 1.5rem; font-size: 1.5rem; border-left: 5px solid #e3350d; padding-left: 15px; }
+
+        /* Card Layout - Bubble Style */
+        .news-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;
+        }
+
+        .item-card {
+            background: #fff; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .item-card:hover { transform: translateY(-50px); }
+
+        /* Upper Image Part */
+        .card-image { width: 100%; height: 250px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card-image img { width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: 0.3s; }
+        .item-card:hover img { transform: scale(1.05); }
+
+        /* Lower Info Part */
+        .card-info { padding: 1.5rem; flex-grow: 1; border-top: 1px solid #f0f0f0; }
+        .card-info h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: #111; }
+        .card-info p { font-size: 0.9rem; color: #666; line-height: 1.4; margin-bottom: 10px; }
+        .card-tag { font-size: 0.75rem; font-weight: bold; color: #e3350d; text-transform: uppercase; }
+
+        footer { text-align: center; padding: 2rem; background: #222; color: #fff; margin-top: 4rem; }
+        
+        /* Loading Spinner */
+        #loader { display: none; text-align: center; font-weight: bold; padding: 20px; color: #e3350d; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu Logo">
+                <span>Pokemon Slasher</span>
+            </div>
+            <div class="search-bubble">
+                <input type="text" id="searchInput" placeholder="Search news or card names (e.g. Charizard)...">
+                <button onclick="performSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <h2 id="displayTitle" class="section-title">Latest Pokemon News</h2>
+        <div id="loader">Catching data...</div>
+        <div id="contentGrid" class="news-grid">
+            </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Pokemon Slasher | Copyright harshj58</p>
+    </footer>
+
+    <script>
+        // Initial Local News Data
+        const localNews = [
+            { title: "Pokemon Worlds 2026 Announced", desc: "The biggest tournament of the year is heading to London this summer.", img: "https://images.pokemon.com/external_content/en-us/pokemon-worlds.jpg", tag: "News" },
+            { title: "New Paradox Pokemon Discovery", desc: "Researchers have spotted a new Ancient form of Suicune in the wild.", img: "https://images.pokemon.com/external_content/en-us/pokemon-scarlet-violet.jpg", tag: "Game Update" },
+            { title: "TCG: Paldean Fates Expansion", desc: "Shiny Pokemon return to the TCG in this massive new expansion set.", img: "https://images.pokemon.com/external_content/en-us/pokemon-tcg.jpg", tag: "TCG News" }
+        ];
+
+        const contentGrid = document.getElementById('contentGrid');
+        const searchInput = document.getElementById('searchInput');
+        const loader = document.getElementById('loader');
+        const displayTitle = document.getElementById('displayTitle');
+
+        // Function to display items
+        function displayItems(items) {
+            contentGrid.innerHTML = '';
+            items.forEach(item => {
+                const card = `
+                    <div class="item-card">
+                        <div class="card-image">
+                            <img src="${item.img || item.images?.large || item.images?.small}" alt="Content">
+                        </div>
+                        <div class="card-info">
+                            <span class="card-tag">${item.tag || item.supertype || 'Pokemon'}</span>
+                            <h3>${item.title || item.name}</h3>
+                            <p>${item.desc || (item.set ? 'Set: ' + item.set.name : 'Click to learn more.')}</p>
+                        </div>
+                    </div>
+                `;
+                contentGrid.innerHTML += card;
+            });
+        }
+
+        // Search Functionality
+        async function performSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            if (!query) {
+                displayTitle.innerText = "Latest Pokemon News";
+                displayItems(localNews);
+                return;
+            }
+
+            loader.style.display = 'block';
+            contentGrid.innerHTML = '';
+
+            // 1. Search Local News First
+            const filteredNews = localNews.filter(n => n.title.toLowerCase().includes(query));
+            
+            // 2. Fetch from Live Pokemon TCG API
+            try {
+                const response = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${query}*&pageSize=12`);
+                const cardData = await response.json();
+                
+                const allResults = [...filteredNews, ...cardData.data];
+                
+                if (allResults.length === 0) {
+                    displayTitle.innerText = `No results for "${query}"`;
+                } else {
+                    displayTitle.innerText = `Search Results for "${query}"`;
+                    displayItems(allResults);
+                }
+            } catch (error) {
+                console.error("API Error:", error);
+                displayItems(filteredNews); // Fallback to news only if API fails
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        // Allow 'Enter' key to search
+        searchInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                performSearch();
+            }
+        });
+
+        // Initialize with news
+        displayItems(localNews);
+    </script>
+</body>
+</html>
