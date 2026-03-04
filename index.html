@@ -3,86 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokemon Slasher | Daily News Hub</title>
+    <title>Pokemon Slasher | News & Stats</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --red: #ff0000; --dark: #111; --bg: #f8f9fa; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg); color: #333; }
 
-        /* Navigation Bar */
+        /* Navigation */
         header { background: #fff; padding: 12px 5%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
         .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1300px; margin: 0 auto; }
         .logo { display: flex; align-items: center; gap: 12px; font-weight: 900; color: var(--red); font-size: 1.6rem; text-decoration: none; }
         .logo img { width: 45px; height: 45px; }
 
         /* Search Bubble */
-        .search-bubble { background: #eee; border-radius: 50px; display: flex; align-items: center; padding: 4px 18px; width: 100%; max-width: 450px; border: 2px solid transparent; transition: 0.3s; }
+        .search-bubble { background: #eee; border-radius: 50px; display: flex; align-items: center; padding: 4px 18px; width: 100%; max-width: 450px; border: 2px solid transparent; }
         .search-bubble:focus-within { border-color: var(--red); background: #fff; box-shadow: 0 0 15px rgba(255,0,0,0.1); }
         .search-bubble input { border: none; background: transparent; padding: 10px; width: 100%; outline: none; font-size: 1rem; }
         .search-bubble button { border: none; background: transparent; cursor: pointer; color: var(--red); font-size: 1.2rem; }
 
-        /* Main Grid */
+        /* Grid */
         main { max-width: 1300px; margin: 40px auto; padding: 0 20px; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
 
-        /* Bubble Card Style */
-        .card { background: #fff; border-radius: 28px; overflow: hidden; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; border: 1px solid #eee; }
-        .card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
-        
-        .card-img { width: 100%; height: 210px; overflow: hidden; background: #ddd; }
+        /* Bubble Card */
+        .card { background: #fff; border-radius: 28px; overflow: hidden; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; border: 1px solid #eee; }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.12); }
+        .card-img { width: 100%; height: 210px; background: #ddd; }
         .card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .card-content { padding: 22px; }
+        .category { font-size: 0.75rem; font-weight: 800; color: var(--red); text-transform: uppercase; margin-bottom: 8px; display: block; }
         
-        .card-content { padding: 22px; flex-grow: 1; }
-        .category { font-size: 0.75rem; font-weight: 800; color: var(--red); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; }
-        .card-content h3 { font-size: 1.25rem; line-height: 1.3; margin-bottom: 12px; color: var(--dark); }
-        .card-content p { font-size: 0.95rem; color: #666; line-height: 1.5; }
-
         /* Modal Popup */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
-        .modal-box { background: #fff; width: 100%; max-width: 850px; border-radius: 35px; display: flex; flex-direction: row; overflow: hidden; position: relative; max-height: 90vh; animation: zoom 0.3s ease; }
-        @keyframes zoom { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 2.5rem; cursor: pointer; color: #000; z-index: 10; }
-        
-        .modal-left { flex: 1; background: #f0f0f0; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-left img { max-width: 100%; max-height: 450px; object-fit: contain; border-radius: 15px; }
-        
-        .modal-right { flex: 1.2; padding: 45px; overflow-y: auto; }
-        .stat-badge { display: inline-block; background: #eee; padding: 5px 12px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; margin-right: 5px; }
+        .modal-box { background: #fff; width: 100%; max-width: 800px; border-radius: 35px; display: flex; overflow: hidden; position: relative; max-height: 90vh; }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 2.5rem; cursor: pointer; z-index: 10; color: #000; background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .modal-left { flex: 1; background: #eee; display: flex; align-items: center; justify-content: center; }
+        .modal-left img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-right { flex: 1.2; padding: 40px; overflow-y: auto; }
+        .stat-badge { display: inline-block; background: #f0f0f0; padding: 8px 15px; border-radius: 12px; font-weight: bold; margin: 5px; }
 
-        footer { text-align: center; padding: 50px; background: var(--dark); color: #fff; margin-top: 60px; }
-
-        @media (max-width: 800px) { .modal-box { flex-direction: column; } .modal-left { height: 300px; } }
+        footer { text-align: center; padding: 40px; background: var(--dark); color: #fff; margin-top: 50px; }
+        @media (max-width: 700px) { .modal-box { flex-direction: column; } .modal-left { height: 250px; } }
     </style>
 </head>
 <body>
 
 <header>
     <div class="nav-container">
-        <a href="#" class="logo" onclick="window.location.reload()">
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Logo">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png">
             <span>Pokemon Slasher</span>
-        </a>
+        </div>
         <div class="search-bubble">
-            <input type="text" id="p-input" placeholder="Search news or Pokemon name...">
+            <input type="text" id="p-input" placeholder="Search Pokemon Stats...">
             <button onclick="pSearch()"><i class="fas fa-search"></i></button>
         </div>
     </div>
 </header>
 
 <main>
-    <div class="section-header">
-        <h2 id="main-title">Global Pokemon News</h2>
-        <span id="date-now" style="color:#888; font-weight:bold;"></span>
-    </div>
+    <h2 style="margin-bottom:30px; border-left: 5px solid red; padding-left: 15px;">Trending Pokemon News</h2>
     <div class="news-grid" id="news-grid"></div>
 </main>
 
 <div class="modal" id="modal">
     <div class="modal-box">
         <span class="close-btn" onclick="closeM()">&times;</span>
-        <div class="modal-left"><img id="m-img" src=""></div>
+        <div class="modal-left"><img id="m-img" src="" alt="News Image"></div>
         <div class="modal-right" id="m-text"></div>
     </div>
 </div>
@@ -92,32 +80,22 @@
 </footer>
 
 <script>
-    // MASSIVE LIST OF NEWS (12 ITEMS)
+    // These images are hosted on Unsplash and work 100% in browsers
     const allNews = [
-        { id: 1, cat: "Championships", title: "Worlds 2026 London Dates Confirmed", img: "https://images.unsplash.com/photo-1613771404721-1f92d799e49f?auto=format&fit=crop&w=800", text: "The London ExCeL center is preparing for 50,000 trainers this August. Tickets go on sale next Monday." },
-        { id: 2, cat: "TCG News", title: "Primal Groudon EX Returns in October", img: "https://images.unsplash.com/photo-1627323567032-a7783134179d?auto=format&fit=crop&w=800", text: "The upcoming TCG set 'Tectonic Rift' features classic Primal designs with modern competitive power levels." },
-        { id: 3, cat: "App Update", title: "Pokemon GO Adds Gigantamax Battles", img: "https://images.unsplash.com/photo-1605973029521-8154a01987b4?auto=format&fit=crop&w=800", text: "Trainers can now encounter G-Max Charizard and G-Max Pikachu in local parks during the new Wild Area event." },
-        { id: 4, cat: "Game Rumors", title: "Gen 10 Region Leaked to be Italy-Inspired", img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800", text: "Insiders suggest the next mainline game will feature a Mediterranean setting with ancient ruins and water-based traversal." },
-        { id: 5, cat: "Anime", title: "New Horizons Movie Poster Released", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800", text: "Liko and Roy face off against a mystery Paradox legendary in the first full-length movie for the new series." },
-        { id: 6, cat: "Merchandise", title: "Life-Size Snorlax Plushes are Back", img: "https://images.unsplash.com/photo-1559535332-db9971090158?auto=format&fit=crop&w=800", text: "The Pokemon Center has restocked the 5-foot tall Snorlax bean bag. Shipping starts early next month." },
-        { id: 7, cat: "Collectibles", title: "Logan Paul’s Pikachu Card Sells for Record", img: "https://images.unsplash.com/photo-1544652478-6653e09f18a2?auto=format&fit=crop&w=800", text: "The PSA 10 Illustrator Pikachu has reached a new auction record, solidifying its place as the holy grail of cards." },
-        { id: 8, cat: "Esports", title: "Pokemon UNITE Asia League Finals", img: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=800", text: "Team Talon takes the trophy in a 3-0 sweep. The meta has shifted toward high-mobility speedsters this season." },
-        { id: 9, cat: "Update", title: "Scarlet/Violet Mystery Gift Code", img: "https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?auto=format&fit=crop&w=800", text: "Use code 'PALDEA2026' to receive a Shiny Quaquaval. The code is active until the end of the month." },
-        { id: 10, cat: "Tech", title: "New Pokemon Sleep Device Revealed", img: "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800", text: "The Go Plus+ 2.0 adds heart rate monitoring and better sleep stage tracking for the popular mobile app." },
-        { id: 11, cat: "TCG News", title: "Eevee Evolution Premium Collection", img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800", text: "All 8 Eeveelutions are getting Special Illustration Rares in a new holiday box set releasing in November." },
-        { id: 12, cat: "Events", title: "Pikachu Outbreak Returns to Yokohama", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800", text: "Thousands of Pikachus will march through the streets of Yokohama once again this summer with new drone shows." }
+        { id: 1, cat: "Championships", title: "London Worlds 2026", img: "https://images.unsplash.com/photo-1613771404721-1f92d799e49f?w=800", text: "The London ExCeL center is preparing for 50,000 trainers this August." },
+        { id: 2, cat: "TCG News", title: "Primal Groudon Returns", img: "https://images.unsplash.com/photo-1627323567032-a7783134179d?w=800", text: "The upcoming TCG set features classic designs with modern power." },
+        { id: 3, cat: "Update", title: "Pokemon GO Wild Area", img: "https://images.unsplash.com/photo-1605973029521-8154a01987b4?w=800", text: "Gigantamax Battles are coming to the real world." },
+        { id: 4, cat: "Rumors", title: "Gen 10 Leaks", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800", text: "New rumors point toward a Mediterranean-inspired region." },
+        { id: 5, cat: "Anime", title: "New Movie Poster", img: "https://images.unsplash.com/photo-1542751110-97427bbecf20?w=800", text: "Liko and Roy face off against a new Paradox Legendary." },
+        { id: 6, cat: "Merch", title: "Giant Snorlax Restock", img: "https://images.unsplash.com/photo-1559535332-db9971090158?w=800", text: "The Pokemon Center has restocked the famous Snorlax bean bag." }
     ];
 
     let searchedPoke = null;
-    document.getElementById('date-now').innerText = new Date().toDateString();
 
-    function renderNews(list) {
-        const grid = document.getElementById('news-grid');
-        grid.innerHTML = list.map(n => `
+    function renderNews() {
+        document.getElementById('news-grid').innerHTML = allNews.map(n => `
             <div class="card" onclick="openM(${n.id}, true)">
-                <div class="card-img">
-                    <img src="${n.img}" onerror="this.src='https://images.unsplash.com/photo-1613771404721-1f92d799e49f?auto=format&fit=crop&w=800'">
-                </div>
+                <div class="card-img"><img src="${n.img}"></div>
                 <div class="card-content">
                     <span class="category">${n.cat}</span>
                     <h3>${n.title}</h3>
@@ -129,28 +107,22 @@
 
     async function pSearch() {
         const q = document.getElementById('p-input').value.toLowerCase().trim();
-        if(!q) return renderNews(allNews);
-        
+        if(!q) return renderNews();
         try {
             const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${q}`);
-            if(!res.ok) throw new Error();
             const data = await res.json();
             searchedPoke = data;
-            
-            document.getElementById('main-title').innerText = "Search Result Found!";
             document.getElementById('news-grid').innerHTML = `
                 <div class="card" onclick="openM('${data.name}', false)">
-                    <div class="card-img" style="background:white; padding:15px;">
-                        <img src="${data.sprites.other['official-artwork'].front_default}" style="object-fit:contain">
-                    </div>
+                    <div class="card-img" style="background:#fff;"><img src="${data.sprites.other['official-artwork'].front_default}" style="object-fit:contain"></div>
                     <div class="card-content">
-                        <span class="category">Pokemon Database</span>
+                        <span class="category">Pokemon Card</span>
                         <h3 style="text-transform:capitalize">${data.name}</h3>
-                        <p>Click to view real-time HP, Attack, Defense, and type details.</p>
+                        <p>Click to see HP and Damage Stats.</p>
                     </div>
                 </div>
             `;
-        } catch { alert("Pokemon not found! Try searching for 'Lucario' or 'Garchomp'."); }
+        } catch { alert("Pokemon not found!"); }
     }
 
     function openM(key, isNews) {
@@ -161,21 +133,23 @@
         if(isNews) {
             const item = allNews.find(n => n.id === key);
             mImg.src = item.img;
+            mImg.style.objectFit = "cover";
             mText.innerHTML = `
                 <span class="category">${item.cat}</span>
-                <h2 style="margin-bottom:15px;">${item.title}</h2>
-                <p style="line-height:1.7; color:#444; font-size:1.1rem;">${item.text} Detailed coverage of this story is updated every hour. Stay tuned for more exclusive interviews and high-resolution images from the scene.</p>
+                <h2 style="margin: 15px 0;">${item.title}</h2>
+                <p style="line-height:1.6; color:#555;">${item.text} This is a major update for the Pokemon community in 2026. Stay tuned for more details on the official Pokemon Slasher news feed.</p>
             `;
         } else {
             mImg.src = searchedPoke.sprites.other['official-artwork'].front_default;
+            mImg.style.objectFit = "contain";
             mText.innerHTML = `
-                <h2 style="text-transform:capitalize; font-size:2rem; margin-bottom:20px;">${searchedPoke.name}</h2>
-                <div class="stat-badge">HP: ${searchedPoke.stats[0].base_stat}</div>
-                <div class="stat-badge">ATK: ${searchedPoke.stats[1].base_stat}</div>
-                <div class="stat-badge">DEF: ${searchedPoke.stats[2].base_stat}</div>
-                <div class="stat-badge">TYPE: ${searchedPoke.types[0].type.name}</div>
-                <div class="stat-badge">WEIGHT: ${searchedPoke.weight / 10}kg</div>
-                <p style="margin-top:20px; color:#555;">This data is pulled live from the PokeAPI. Use this info to build your competitive team or check card damage stats.</p>
+                <h2 style="text-transform:capitalize; font-size:2rem;">${searchedPoke.name}</h2>
+                <div style="margin-top:20px;">
+                    <div class="stat-badge">HP: ${searchedPoke.stats[0].base_stat}</div>
+                    <div class="stat-badge">ATK: ${searchedPoke.stats[1].base_stat}</div>
+                    <div class="stat-badge">DEF: ${searchedPoke.stats[2].base_stat}</div>
+                    <div class="stat-badge">TYPE: ${searchedPoke.types[0].type.name}</div>
+                </div>
             `;
         }
         modal.style.display = 'flex';
@@ -183,10 +157,7 @@
 
     function closeM() { document.getElementById('modal').style.display = 'none'; }
     window.onclick = (e) => { if(e.target == document.getElementById('modal')) closeM(); }
-    document.getElementById('p-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') pSearch(); });
-
-    renderNews(allNews);
+    renderNews();
 </script>
-
 </body>
 </html>
