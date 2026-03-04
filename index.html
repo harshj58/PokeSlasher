@@ -1,65 +1,54 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokemon Slasher | News & TCG</title>
+    <title>Pokemon Slasher | News & Cards</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #ff0000; --dark: #1a1a1a; --glass: rgba(255, 255, 255, 0.9); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background: #f4f7f6; color: #333; overflow-x: hidden; }
+        :root { --pk-red: #ff0000; --pk-blue: #3b4cca; --pk-yellow: #ffde00; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #f0f2f5; color: #333; }
 
-        /* Header */
-        header { background: #fff; padding: 15px 5%; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; gap: 20px; }
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 900; color: var(--primary); font-size: 1.5rem; }
+        /* Header & Nav */
+        header { background: #fff; padding: 15px 5%; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; gap: 15px; }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--pk-red); font-size: 1.4rem; }
         .logo img { width: 50px; height: 50px; }
 
         /* Search Bubble */
-        .search-bubble { background: #f0f0f0; border-radius: 50px; display: flex; align-items: center; padding: 5px 20px; width: 100%; max-width: 450px; border: 2px solid transparent; transition: 0.3s; }
-        .search-bubble:focus-within { border-color: var(--primary); background: #fff; box-shadow: 0 0 15px rgba(255,0,0,0.1); }
-        .search-bubble input { border: none; background: transparent; padding: 12px; width: 100%; outline: none; font-size: 1rem; }
-        .search-bubble button { border: none; background: transparent; cursor: pointer; color: var(--primary); font-size: 1.2rem; }
+        .search-bubble { background: #f1f1f1; border-radius: 50px; display: flex; align-items: center; padding: 5px 20px; width: 100%; max-width: 400px; transition: 0.3s; border: 2px solid transparent; }
+        .search-bubble:focus-within { background: #fff; border-color: var(--pk-red); box-shadow: 0 0 10px rgba(255,0,0,0.1); }
+        .search-bubble input { border: none; background: transparent; padding: 10px; width: 100%; outline: none; font-size: 1rem; }
+        .search-bubble button { border: none; background: transparent; cursor: pointer; color: var(--pk-red); font-size: 1.2rem; }
 
-        /* Main Grid */
-        main { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+        /* Content Grid */
+        main { max-width: 1200px; margin: 30px auto; padding: 0 20px; min-height: 70vh; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
 
-        /* Card/Bubble Style */
-        .item-card { background: #fff; border-radius: 25px; overflow: hidden; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.4s ease; border: 1px solid #eee; display: flex; flex-direction: column; }
-        .item-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-        .card-image { width: 100%; height: 240px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        /* The Bubble Card */
+        .item-card { background: #fff; border-radius: 25px; overflow: hidden; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid #eee; display: flex; flex-direction: column; }
+        .item-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+        .card-image { width: 100%; height: 220px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 15px; }
         .card-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .card-info { padding: 20px; border-top: 1px solid #f0f0f0; }
-        .card-tag { color: var(--primary); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .card-info h3 { font-size: 1.2rem; margin-bottom: 8px; color: #111; }
+        .card-info { padding: 20px; border-top: 1px solid #f0f0f0; flex-grow: 1; }
+        .card-tag { color: var(--pk-red); font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .card-info h3 { font-size: 1.2rem; margin-bottom: 8px; text-transform: capitalize; }
 
-        /* Modal / Popup */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-content { background: #fff; width: 100%; max-width: 800px; border-radius: 30px; display: flex; overflow: hidden; position: relative; animation: pop 0.3s ease-out; }
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 2rem; cursor: pointer; color: #333; z-index: 10; }
-        .modal-left { flex: 1; background: #f4f4f4; display: flex; align-items: center; justify-content: center; padding: 40px; }
-        .modal-left img { width: 100%; max-width: 300px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2)); }
-        .modal-right { flex: 1.2; padding: 40px; overflow-y: auto; max-height: 80vh; }
-        
-        /* Stats Table */
-        .stats-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .stats-table tr { border-bottom: 1px solid #eee; }
-        .stats-table td { padding: 12px 0; font-size: 0.95rem; }
-        .stat-label { font-weight: bold; color: #666; width: 100px; }
-        .hp-badge { background: #4caf50; color: #fff; padding: 2px 10px; border-radius: 10px; font-weight: bold; }
+        /* Modal Popup */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-content { background: #fff; width: 100%; max-width: 700px; border-radius: 30px; display: flex; overflow: hidden; position: relative; flex-wrap: wrap; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer; z-index: 10; }
+        .modal-left { flex: 1; min-width: 300px; background: #eee; display: flex; align-items: center; justify-content: center; padding: 30px; }
+        .modal-left img { width: 100%; max-width: 250px; }
+        .modal-right { flex: 1.2; padding: 30px; min-width: 300px; }
 
-        #loader { display: none; text-align: center; font-size: 1.5rem; padding: 50px; color: var(--primary); }
+        .stat-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 1rem; }
+        .stat-label { font-weight: bold; color: #666; }
 
-        @media (max-width: 768px) {
-            .modal-content { flex-direction: column; }
-            .modal-left { padding: 20px; }
-        }
+        #loader { display: none; text-align: center; width: 100%; padding: 50px; color: var(--pk-red); font-weight: bold; }
 
-        footer { text-align: center; padding: 40px; background: var(--dark); color: #fff; margin-top: 60px; }
+        footer { text-align: center; padding: 30px; background: #1a1a1a; color: #fff; margin-top: 50px; }
     </style>
 </head>
 <body>
@@ -71,26 +60,23 @@
                 <span>Pokemon Slasher</span>
             </div>
             <div class="search-bubble">
-                <input type="text" id="searchInput" placeholder="Search news or Card name (e.g. Charizard)">
+                <input type="text" id="searchInput" placeholder="Search Pokemon name (e.g. Lucario)">
                 <button onclick="performSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
         </div>
     </header>
 
     <main>
-        <h2 id="sectionTitle" style="margin-bottom:30px;">Featured News</h2>
-        <div id="loader"><i class="fas fa-spinner fa-spin"></i> Searching Pokedex...</div>
+        <h2 id="sectionTitle" style="margin-bottom:25px;">Latest Pokemon News</h2>
+        <div id="loader">Catching Pokemon...</div>
         <div id="contentGrid" class="news-grid"></div>
     </main>
 
     <div class="modal" id="detailsModal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div class="modal-left">
-                <img id="modalImg" src="" alt="Pokemon">
-            </div>
-            <div class="modal-right" id="modalDetails">
-                </div>
+            <div class="modal-left"><img id="modalImg" src=""></div>
+            <div class="modal-right" id="modalDetails"></div>
         </div>
     </div>
 
@@ -99,98 +85,76 @@
     </footer>
 
     <script>
-        const newsData = [
-            { id: 'n1', name: "Worlds 2026: London", tag: "News", desc: "The Pokémon World Championships returns to London! Get ready for the ultimate showdown in August 2026.", img: "https://images.pokemon.com/external_content/en-us/pokemon-worlds.jpg", type: 'news', longDesc: "Official announcement: The 2026 Pokémon World Championships will take place at ExCeL London. Players from around the globe will compete in the TCG, Video Games, and Pokémon GO for over $2,000,000 in prizes. Special 'London Pikachu' plushies will be available at the Pokémon Center Pop-up store." },
-            { id: 'n2', name: "New TCG Set: 'Temporal Fate'", tag: "TCG News", desc: "A brand new expansion featuring Paradox Suicune and Iron Crown has been revealed.", img: "https://images.pokemon.com/external_content/en-us/pokemon-tcg.jpg", type: 'news', longDesc: "The upcoming TCG expansion 'Temporal Fate' introduces ACE SPEC cards back into the format. The set contains over 160 cards, including 7 brand new Paradox Pokémon cards with high-damage attacks and unique 'Ancient' and 'Future' traits." }
+        const news = [
+            { id: 'n1', name: "Worlds 2026 London", tag: "News", desc: "The road to the championships starts now.", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", long: "London has been confirmed as the host for the 2026 World Championships. Exclusive Pikachu gear will be available!" },
+            { id: 'n2', name: "New TCG Expansion", tag: "TCG", desc: "The 'Electric Surge' set arrives this winter.", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/135.png", long: "Expect 150 new cards and 10 brand new Special Illustration Rares in the upcoming December set." },
+            { id: 'n3', name: "Pokemon GO Wild Area", tag: "Update", desc: "A massive GO update is rolling out globally.", img: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png", long: "New Raid Battle mechanics and increased shiny rates for legendary Pokemon have been added to the game." }
         ];
 
-        const grid = document.getElementById('contentGrid');
-        const loader = document.getElementById('loader');
+        let currentData = [];
 
-        function init() {
-            renderItems(newsData);
-        }
-
-        function renderItems(data) {
-            grid.innerHTML = data.map(item => `
-                <div class="item-card" onclick="showDetails('${item.id}', '${item.type || 'card'}')">
-                    <div class="card-image">
-                        <img src="${item.img || item.images?.small}" alt="Item">
-                    </div>
+        function render(items) {
+            document.getElementById('contentGrid').innerHTML = items.map(item => `
+                <div class="item-card" onclick="showPopup('${item.id || item.name}')">
+                    <div class="card-image"><img src="${item.img || item.sprites?.other['official-artwork']?.front_default}"></div>
                     <div class="card-info">
-                        <span class="card-tag">${item.tag || item.supertype}</span>
-                        <h3>${item.name}</h3>
-                        <p>${item.desc || (item.set ? item.set.name : 'Click for stats')}</p>
+                        <span class="card-tag">${item.tag || 'Pokemon'}</span>
+                        <h3>${item.name.replace('-', ' ')}</h3>
+                        <p>${item.desc || 'Tap to see HP, Attacks, and Stats!'}</p>
                     </div>
                 </div>
             `).join('');
         }
 
-        let currentResults = [];
-
         async function performSearch() {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) return renderItems(newsData);
-
-            loader.style.display = 'block';
-            grid.innerHTML = '';
-
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!query) return render(news);
+            
+            document.getElementById('loader').style.display = 'block';
             try {
-                // Search Pokemon TCG API
-                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${query}*&pageSize=12`);
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${query}`);
+                if (!res.ok) throw new Error();
                 const data = await res.json();
-                currentResults = data.data;
-                renderItems(currentResults);
-                document.getElementById('sectionTitle').innerText = `Card Results for "${query}"`;
-            } catch (err) {
-                grid.innerHTML = '<p>Error loading cards. Try a different name.</p>';
+                currentData = [data];
+                render(currentData);
+                document.getElementById('sectionTitle').innerText = "Pokemon Found!";
+            } catch {
+                document.getElementById('sectionTitle').innerText = "Pokemon not found. Try 'Charizard'";
             } finally {
-                loader.style.display = 'none';
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
-        function showDetails(id, type) {
+        function showPopup(id) {
             const modal = document.getElementById('detailsModal');
-            const detailsDiv = document.getElementById('modalDetails');
-            const modalImg = document.getElementById('modalImg');
-            
-            let item;
-            if (type === 'news') {
-                item = newsData.find(n => n.id === id);
-                modalImg.src = item.img;
-                detailsDiv.innerHTML = `
-                    <span class="card-tag">${item.tag}</span>
-                    <h1 style="margin-bottom:15px">${item.name}</h1>
-                    <p style="line-height:1.6; color:#444">${item.longDesc}</p>
-                `;
-            } else {
-                item = currentResults.find(c => c.id === id);
-                modalImg.src = item.images.large;
-                
-                const attacks = item.attacks ? item.attacks.map(a => `
-                    <tr><td class="stat-label">Attack</td><td><strong>${a.name}</strong> (${a.damage || '0'} dmg)<br><small>${a.text}</small></td></tr>
-                `).join('') : '<tr><td>No attacks listed</td></tr>';
+            const details = document.getElementById('modalDetails');
+            const img = document.getElementById('modalImg');
 
-                detailsDiv.innerHTML = `
-                    <span class="card-tag">${item.rarity || 'Common'} - ${item.number}/${item.set.printedTotal}</span>
-                    <h1>${item.name} <span class="hp-badge">${item.hp ? item.hp + ' HP' : ''}</span></h1>
-                    <p><em>${item.set.name} Expansion</em></p>
-                    
-                    <table class="stats-table">
-                        <tr><td class="stat-label">Type</td><td>${item.types?.join(', ') || 'Normal'}</td></tr>
-                        ${attacks}
-                        <tr><td class="stat-label">Weakness</td><td>${item.weaknesses?.[0]?.type || 'None'} ${item.weaknesses?.[0]?.value || ''}</td></tr>
-                        <tr><td class="stat-label">Retreat</td><td>${item.retreatCost?.length || 0} Energy</td></tr>
-                        <tr><td class="stat-label">Artist</td><td>${item.artist || 'Unknown'}</td></tr>
-                    </table>
+            const item = news.find(n => n.id === id) || currentData.find(c => c.name === id);
+            
+            if (!item) return;
+
+            if (item.tag) { // It's News
+                img.src = item.img;
+                details.innerHTML = `<h2>${item.name}</h2><p style="margin-top:15px; line-height:1.6">${item.long}</p>`;
+            } else { // It's a Pokemon Card
+                img.src = item.sprites.other['official-artwork'].front_default;
+                details.innerHTML = `
+                    <h2 style="text-transform:capitalize">${item.name}</h2>
+                    <div class="stat-row"><span class="stat-label">HP</span><span>${item.stats[0].base_stat}</span></div>
+                    <div class="stat-row"><span class="stat-label">Attack</span><span>${item.stats[1].base_stat}</span></div>
+                    <div class="stat-row"><span class="stat-label">Defense</span><span>${item.stats[2].base_stat}</span></div>
+                    <div class="stat-row"><span class="stat-label">Weight</span><span>${item.weight / 10} kg</span></div>
+                    <div class="stat-row"><span class="stat-label">Type</span><span style="text-transform:capitalize">${item.types.map(t => t.type.name).join(', ')}</span></div>
                 `;
             }
             modal.style.display = 'flex';
         }
 
         function closeModal() { document.getElementById('detailsModal').style.display = 'none'; }
-        window.onclick = (e) => { if (e.target.classList.contains('modal')) closeModal(); }
-        init();
+        window.onclick = (e) => { if (e.target.className === 'modal') closeModal(); }
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
+        render(news);
     </script>
 </body>
 </html>
